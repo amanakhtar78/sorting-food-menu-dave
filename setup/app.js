@@ -82,33 +82,16 @@ const menu = [
 ];
 
 const sectionCenter = document.querySelector(".section-center");
-const filterBtns = document.querySelectorAll(".filter-btn");
 
+const container = document.querySelector(".btn-container");
 window.addEventListener("DOMContentLoaded", () => {
   displaymenuItem(menu);
-});
 
-filterBtns.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    console.log(e.currentTarget.dataset.id);
-    const category = e.currentTarget.dataset.id;
-    const categoryFilter = menu.filter((currentItem) => {
-      if (currentItem.category === category) {
-        return currentItem;
-      }
-    });
-    if (category === "all") {
-      displaymenuItem(menu);
-    } else {
-      displaymenuItem(categoryFilter);
-    }
-  });
+  displayFilterbtn();
 });
 
 const displaymenuItem = (menuItem) => {
   let displayMenu = menuItem.map((item) => {
-    console.log(item.id);
-
     return ` <article class="menu-item">
           <img src=${item.img} alt=${item.title} class="photo" />
           <div class="item-info">
@@ -122,10 +105,45 @@ const displaymenuItem = (menuItem) => {
         </article>`;
   });
   displayMenu = displayMenu.join("");
-  console.log(displayMenu);
+
   sectionCenter.innerHTML = displayMenu;
 };
 
+function displayFilterbtn() {
+  const categories = menu.reduce(
+    (value, item) => {
+      if (!value.includes(item.category)) {
+        value.push(item.category);
+      }
+      return value;
+    },
+    ["all"]
+  );
+  const categoryBtns = categories
+    .map((category) => {
+      return `<button type="button" class="filter-btn" data-id=${category}>${category}</button>`;
+    })
+    .join("");
+
+  console.log(categoryBtns);
+  container.innerHTML = categoryBtns;
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  filterBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const category = e.currentTarget.dataset.id;
+      const categoryFilter = menu.filter((currentItem) => {
+        if (currentItem.category === category) {
+          return currentItem;
+        }
+      });
+      if (category === "all") {
+        displaymenuItem(menu);
+      } else {
+        displaymenuItem(categoryFilter);
+      }
+    });
+  });
+}
 // //get parent element
 // const sectionCenter = document.querySelector(".section-center");
 // const btnContainer = document.querySelector(".btn-container");
